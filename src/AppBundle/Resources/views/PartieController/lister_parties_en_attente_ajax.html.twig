@@ -12,8 +12,10 @@
                     <td>Partie {{ partie.id }}</td>
                     <td>{{ partie.joueurs | length }}</td>
                     <td>
-                        <a>
+                        <a href="{{ path("rejoindre_partie", { idPartie: partie.id } ) }}">
                             <button>Rejoindre</button>
+                        </a>
+                        <a href="{{ path("demarrer_partie", {idPartie: partie.id }) }}">
                             <button>Démarrer</button>
                         </a>
                     </td>

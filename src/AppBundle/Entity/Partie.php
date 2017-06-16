@@ -36,6 +36,22 @@ class Partie
     private $etat;
     
     /**
+     * Renvoie l'ordre maxi de ts les joueurs de cette partie.
+     * @return type
+     */
+    public function getOrdreMax(){
+        
+        $ordre=0;
+        foreach ($this->joueurs as $joueur) {
+            
+            if( $joueur->getOrdre()>$ordre )
+                $ordre = $joueur->getOrdre();
+        }
+        
+        return $ordre;
+    }
+    
+    /**
      * Get id
      *
      * @return int

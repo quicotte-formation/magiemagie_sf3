@@ -38,6 +38,16 @@ class Joueur
     private $cartes;
     
     /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $ordre;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $elimine;
+    
+    /**
      * Get id
      *
      * @return int
@@ -134,5 +144,53 @@ class Joueur
     public function getNom()
     {
         return $this->nom;
+    }
+
+    /**
+     * Set ordre
+     *
+     * @param integer $ordre
+     *
+     * @return Joueur
+     */
+    public function setOrdre($ordre)
+    {
+        $this->ordre = $ordre;
+
+        return $this;
+    }
+
+    /**
+     * Get ordre
+     *
+     * @return integer
+     */
+    public function getOrdre()
+    {
+        return $this->ordre;
+    }
+
+    /**
+     * Set elimine
+     *
+     * @param boolean $elimine
+     *
+     * @return Joueur
+     */
+    public function setElimine($elimine)
+    {
+        $this->elimine = $elimine;
+
+        return $this;
+    }
+
+    /**
+     * Get elimine
+     *
+     * @return boolean
+     */
+    public function getElimine()
+    {
+        return $this->elimine;
     }
 }

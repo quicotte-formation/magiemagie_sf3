@@ -28,6 +28,11 @@ services:
         resource: '../../src/AppBundle/Controller'
         public: true
         tags: ['controller.service_arguments']
+        
+    partieService:
+        class: AppBundle\Service\PartieService
+        arguments: ["@doctrine.orm.default_entity_manager"]
+        public: true
 
     # add more services, or override services that need manual wiring
     # AppBundle\Service\ExampleService:
