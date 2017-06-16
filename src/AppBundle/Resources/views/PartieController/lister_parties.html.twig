@@ -1,0 +1,28 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Rejoignez une partie{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <h1 class="col-sm-12">Rejoignez une partie</h1>
+        </div>
+        <div class="row">
+            <div class="col-sm-12" id="partiesEnAttente">
+                
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        
+        function rafraichirListeParties(){
+            
+            $('#partiesEnAttente').load("{{ path("lister_parties_en_attente_ajax") }}");
+        }
+        
+        setInterval(rafraichirListeParties, 5000);
+    </script>
+{% endblock %}

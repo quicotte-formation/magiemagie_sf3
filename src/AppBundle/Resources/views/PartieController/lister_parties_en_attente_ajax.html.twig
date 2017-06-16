@@ -1,0 +1,25 @@
+<div class="row">
+    <div class="col-sm-12">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <th>NOM</th>
+                <th>JOUEURS</th>
+                <th>ACTION</th>
+                </thead>
+                {% for partie in parties %}
+                <tr>
+                    <td>Partie {{ partie.id }}</td>
+                    <td>{{ partie.joueurs | length }}</td>
+                    <td>
+                        <a>
+                            <button>Rejoindre</button>
+                            <button>Démarrer</button>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
