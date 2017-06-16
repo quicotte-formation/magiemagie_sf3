@@ -27,6 +27,9 @@ class PartieController extends Controller
         // Rejoint la partie
         $partieService->rejoindre( $joueurId, $idPartie );
         
+        // Place l'id de la partie en session
+        $req->getSession()->set("idPartieActuelle", $idPartie);
+        
         // Redirige vers tableau de bord
         return $this->redirectToRoute("tableau_de_bord");
     }
@@ -45,6 +48,9 @@ class PartieController extends Controller
         
         // Démarre la partie
         $partieService->demarrer( $idPartie );
+        
+        // Place l'id de la partie en session
+        $req->getSession()->set("idPartieActuelle", $idPartie);
         
         // Redirige vers tableau de bord
         return $this->redirectToRoute("tableau_de_bord");
