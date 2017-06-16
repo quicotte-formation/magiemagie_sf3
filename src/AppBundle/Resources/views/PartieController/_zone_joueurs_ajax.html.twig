@@ -1,0 +1,13 @@
+<div class="col-sm-12">
+    <table class="table">
+        <tr>
+            {% for j in joueurs %}
+                <td style="text-align: center;">
+                    <img class="img-thumbnail" src="{{ asset("images/sorciere") }}{{ j.ordre }}.png"/>
+                    <p>{{ j.nom }}</p>
+                    <p>Cartes: {{ j.cartes | length }}</p>
+                </td>
+            {% endfor %}
+        </tr>
+    </table>
+</div>

@@ -8,6 +8,25 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class PartieController extends Controller
 {
     /**
+     * @Route("/zone_mes_cartes_ajax", name="zone_mes_cartes_ajax")
+     */
+    public function zoneMesCartesAjaxAction(){
+       
+    }
+    
+    /**
+     * @Route("/zone_joueurs_ajax", name="zone_joueurs_ajax")
+     */
+    public function zoneJoueursAjaxAction(\Symfony\Component\HttpFoundation\Request $req){
+        
+        $partieId=$req->getSession()->get("idPartieActuelle");
+        
+        $joueurs = $this->getDoctrine()->getRepository("AppBundle:Joueur")->findByPartieIdOrderByJoueurOrdre($partieId);
+        
+        return $this->render("AppBundle:PartieController:_zone_joueurs_ajax.html.twig", array("joueurs"=>$joueurs) );
+    }
+    
+    /**
      * @Route("/tableau_de_bord", name="tableau_de_bord")
      */
     public function tableauDeBordAction(){
