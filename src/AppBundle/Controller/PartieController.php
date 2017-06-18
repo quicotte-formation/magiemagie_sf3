@@ -10,8 +10,12 @@ class PartieController extends Controller
     /**
      * @Route("/zone_mes_cartes_ajax", name="zone_mes_cartes_ajax")
      */
-    public function zoneMesCartesAjaxAction(){
+    public function zoneMesCartesAjaxAction(\Symfony\Component\HttpFoundation\Request $req){
+        
+       // Récupère liste cartes du joueur
+       $cartes = $this->getDoctrine()->getRepository("AppBundle:Joueur")->find( $req->getSession()->get("joueurConnecte")->getId() )->getCartes();
        
+       return $this->render("AppBundle:Partie:_zone_mes_cartes_ajax.html.twig", array("cartes"=>$cartes) ); 
     }
     
     /**
@@ -23,7 +27,7 @@ class PartieController extends Controller
         
         $joueurs = $this->getDoctrine()->getRepository("AppBundle:Joueur")->findByPartieIdOrderByJoueurOrdre($partieId);
         
-        return $this->render("AppBundle:PartieController:_zone_joueurs_ajax.html.twig", array("joueurs"=>$joueurs) );
+        return $this->render("AppBundle:Partie:_zone_joueurs_ajax.html.twig", array("joueurs"=>$joueurs) );
     }
     
     /**
@@ -31,7 +35,7 @@ class PartieController extends Controller
      */
     public function tableauDeBordAction(){
         
-        return $this->render("AppBundle:PartieController:tableau_de_bord.html.twig", array() );
+        return $this->render("AppBundle:Partie:tableau_de_bord.html.twig", array() );
     }
     
     /**
@@ -94,7 +98,7 @@ class PartieController extends Controller
             $partiesEnAttente = $this->getDoctrine()->getRepository("AppBundle:Partie")->listerPartiesEnAttente();
         }
         
-        return $this->render("AppBundle:PartieController:lister_parties_en_attente_ajax.html.twig",
+        return $this->render("AppBundle:Partie:_lister_parties_en_attente_ajax.html.twig",
                 array("parties"=>$partiesEnAttente));
     }
     
@@ -103,7 +107,7 @@ class PartieController extends Controller
      */
     public function listerPartiesAction()
     {
-        return $this->render('AppBundle:PartieController:lister_parties.html.twig', array(
+        return $this->render('AppBundle:Partie:lister_parties.html.twig', array(
             // ...
         ));
     }

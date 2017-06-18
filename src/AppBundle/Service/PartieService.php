@@ -22,6 +22,50 @@ class PartieService {
      */
     private $em;
 
+    public function determinerJoueurSuivant($partieId){
+        
+        $this->em->beginTransaction();
+        
+        // Récupère la partie
+        $partie = $this->em->find("AppBundle:Partie", $partieId);
+        
+        // Récupère les joueurs actifs suivants, dans l'ordre
+        $joueursActifsSuivants
+                = $this->em->createQuery(""
+                . "SELECT   j "
+                . "FROM     AppBundle:Joueur j "
+                . "         JOIN j.partie p "
+                . "WHERE    p.id=:partieId AND "
+                . "         j.elimine=false AND "
+                . "         j.ordre>p.ordre "
+                . "ORDER BY j.ordre")->setParameter("partieId", $partieId)
+                ->getResult();
+
+        if( count($joueursActifsSuivants>0) )
+            $partie->setOrdre( $joueursActifsSuivants[0]->getOrdre() + 1 );
+        else{
+            
+            // Récupère les joueurs actifs précédents, dans l'ordre
+            $joueursActifsPrécédents
+                = $this->em->createQuery(""
+                . "SELECT   j "
+                . "FROM     AppBundle:Joueur j "
+                . "         JOIN j.partie p "
+                . "WHERE    p.id=:partieId AND "
+                . "         j.elimine=false AND "
+                . "         j.ordre<p.ordre "
+                . "ORDER BY j.ordre")->setParameter("partieId", $partieId)
+                ->getResult();
+            if( count($joueursActifsSuivants)<0 )
+                throw new \RuntimeException("La partie est terminée!");
+            
+            $partie->setOrdre( $joueursActifsPrécédents[0]->getOrdre() );
+        }
+        
+        $this->em->push();
+        $this->em->commit();
+    }
+    
     /**
      * Crée une nouvelle carte, initialisée avec l'un des types de cartes existant.
      * @return \AppBundle\Service\AppBundle\Entity\Carte
@@ -60,6 +104,9 @@ class PartieService {
                 $this->em->persist($carte);
             }
         }
+        
+        // Détermine que le 1er joueur a la main
+        $partie->setOrdre(1);
 
         $this->em->flush();
         $this->em->commit();

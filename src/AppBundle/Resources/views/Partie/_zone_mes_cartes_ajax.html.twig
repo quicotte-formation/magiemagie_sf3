@@ -1,0 +1,12 @@
+<div class="col-sm-12">
+    <h2>Mes cartes</h2>
+    <table class="table">
+        <tr>
+            {% for carte in cartes %}
+                <td style="text-align: center;">
+                    <img class="img-thumbnail" src="{{ asset("images/") }}{{carte.type}}.png" alt="{{ carte.type | capitalize }}"/>
+                </td>
+            {% endfor %}
+        </tr>
+    </table>
+</div>

@@ -36,6 +36,11 @@ class Partie
     private $etat;
     
     /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $ordre;
+    
+    /**
      * Renvoie l'ordre maxi de ts les joueurs de cette partie.
      * @return type
      */
@@ -124,5 +129,29 @@ class Partie
     public function getEtat()
     {
         return $this->etat;
+    }
+
+    /**
+     * Set ordre
+     *
+     * @param integer $ordre
+     *
+     * @return Partie
+     */
+    public function setOrdre($ordre)
+    {
+        $this->ordre = $ordre;
+
+        return $this;
+    }
+
+    /**
+     * Get ordre
+     *
+     * @return integer
+     */
+    public function getOrdre()
+    {
+        return $this->ordre;
     }
 }
