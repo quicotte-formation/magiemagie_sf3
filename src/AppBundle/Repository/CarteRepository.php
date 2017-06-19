@@ -10,4 +10,19 @@ namespace AppBundle\Repository;
  */
 class CarteRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * Renvoie un tableau comprenant (id, type) des cartes du
+     * joueur dont tu passes l'id en paramètre.
+     * @param type $joueurId
+     */
+    public function findDataByJoueurId($joueurId){
+        
+        return $this->getEntityManager()->createQuery(""
+                . "SELECT   c.id, c.type "
+                . "FROM     AppBundle:Carte c "
+                . "         JOIN c.joueur j "
+                . "WHERE    j.id=:joueurId")
+                ->setParameter("joueurId", $joueurId)
+                ->getScalarResult();
+    }
 }

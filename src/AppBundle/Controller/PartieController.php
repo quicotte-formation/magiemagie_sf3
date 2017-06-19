@@ -8,6 +8,24 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class PartieController extends Controller
 {
     /**
+     * @Route("/ajax_etat_partie", name="ajax_etat_partie")
+     * @param \Symfony\Component\HttpFoundation\Request $req
+     */
+    public function ajaxEtatPartie(\Symfony\Component\HttpFoundation\Request $req){
+
+        $idPartie = $req->getSession()->get("idPartieActuelle");
+        $joueur = $req->getSession()->get("joueurConnecte");
+        $em = $this->getDoctrine()->getManager();
+        
+        // Construit objet: {joueurs, mesCartes, monTour, etatPartie}
+        $dto["joueurs"] = $this->getDoctrine()->getRepository("AppBundle:Joueur")->findDataByPartieIdOrderByJoueurOrdre($idPartie);
+        $dto["mesCartes"] = $this->getDoctrine()->getRepository("AppBundle:Carte")->findDataByJoueurId($joueur->getId() );
+        $dto["partie"] = $this->getDoctrine()->getRepository("AppBundle:Partie")->findDataById($idPartie);
+        
+        return $this->json($dto);
+    }
+    
+    /**
      * @Route("/zone_mes_cartes_ajax", name="zone_mes_cartes_ajax")
      */
     public function zoneMesCartesAjaxAction(\Symfony\Component\HttpFoundation\Request $req){

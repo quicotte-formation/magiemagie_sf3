@@ -10,6 +10,20 @@ namespace AppBundle\Repository;
  */
 class JoueurRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findDataByPartieIdOrderByJoueurOrdre($partieId){
+        
+        return $this->getEntityManager()->createQuery(
+                "  SELECT   j.elimine, j.id, j.nom, j.ordre, COUNT(c) nbCartes "
+                . "FROM     AppBundle:Joueur j "
+                . "         JOIN j.partie p "
+                . "         LEFT JOIN j.cartes c "
+                . "WHERE    p.id=:partieId "
+                . "GROUP BY j "
+                . "ORDER BY j.ordre")
+                ->setParameter("partieId", $partieId)
+                ->getScalarResult();
+    }
+    
     public function findByPartieIdOrderByJoueurOrdre($partieId){
         
         return $this->getEntityManager()->createQuery(

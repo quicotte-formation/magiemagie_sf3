@@ -10,6 +10,16 @@ namespace AppBundle\Repository;
  */
 class PartieRepository extends \Doctrine\ORM\EntityRepository {
 
+    public function findDataById($partieId){
+        
+        return $this->getEntityManager()->createQuery(""
+                . "SELECT   p.id, p.etat, p.ordre "
+                . "FROM     AppBundle:Partie p "
+                . "WHERE    p.id=:partieId")
+                ->setParameter("partieId", $partieId)
+                ->getScalarResult();
+    }
+    
     public function listerPartiesEnAttente() {
         
         $qb = $this->getEntityManager()->createQueryBuilder();
