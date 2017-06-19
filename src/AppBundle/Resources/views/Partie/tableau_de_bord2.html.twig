@@ -1,0 +1,28 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Partie en cours{% endblock %}
+
+{% block body %}
+    <div class="container" ng-app="monApp" ng-controller="monControleur">
+        <div class="row" id="zone-joueurs">
+
+        </div>
+        <div class="row" id="zone-mes-cartes">
+            {% raw %}
+                {{ titre }}
+            {% endraw %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset("js/angular.min.js") }}" type="text/javascript"></script>
+    <script type="text/javascript">
+                var app = angular.module("monApp", []);
+
+                app.controller("monControleur", ["$scope", function ($scope) {
+
+                        $scope.titre = "Coucou";
+                    }]);
+    </script>
+{% endblock %}

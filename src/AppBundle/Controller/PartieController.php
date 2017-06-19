@@ -53,7 +53,7 @@ class PartieController extends Controller
      */
     public function tableauDeBordAction(){
         
-        return $this->render("AppBundle:Partie:tableau_de_bord.html.twig", array() );
+        return $this->render("AppBundle:Partie:tableau_de_bord2.html.twig", array() );
     }
     
     /**
