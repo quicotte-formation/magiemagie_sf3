@@ -17,7 +17,7 @@ class PartieRepository extends \Doctrine\ORM\EntityRepository {
                 . "FROM     AppBundle:Partie p "
                 . "WHERE    p.id=:partieId")
                 ->setParameter("partieId", $partieId)
-                ->getScalarResult();
+                ->getScalarResult()[0];
     }
     
     public function listerPartiesEnAttente() {
