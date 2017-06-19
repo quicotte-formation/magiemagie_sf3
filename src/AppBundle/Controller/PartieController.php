@@ -21,6 +21,7 @@ class PartieController extends Controller
         $dto["joueurs"] = $this->getDoctrine()->getRepository("AppBundle:Joueur")->findDataByPartieIdOrderByJoueurOrdre($idPartie);
         $dto["mesCartes"] = $this->getDoctrine()->getRepository("AppBundle:Carte")->findDataByJoueurId($joueur->getId() );
         $dto["partie"] = $this->getDoctrine()->getRepository("AppBundle:Partie")->findDataById($idPartie);
+        $dto["joueurConnecte"] = $this->getDoctrine()->getRepository("AppBundle:Joueur")->findOneDataByJoueurId($joueur->getId());
         
         return $this->json($dto);
     }

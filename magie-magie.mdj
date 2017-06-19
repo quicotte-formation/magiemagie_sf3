@@ -10775,6 +10775,18 @@
 							"kind": "opaque",
 							"isLocallyReentrant": false,
 							"isSynchronous": true
+						},
+						{
+							"_type": "UMLAction",
+							"_id": "AAAAAAFcwZw5Elv1xww=",
+							"_parent": {
+								"$ref": "AAAAAAFcumAZx33EwhM="
+							},
+							"name": "Action4",
+							"visibility": "public",
+							"kind": "acceptSignal",
+							"isLocallyReentrant": false,
+							"isSynchronous": true
 						}
 					],
 					"edges": [

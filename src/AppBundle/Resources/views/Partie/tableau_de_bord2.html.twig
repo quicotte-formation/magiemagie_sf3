@@ -32,6 +32,10 @@
                     </table>
                 </div>
             </div>
+            <div ng-if="dtoPartie.partie.ordre==dtoPartie.joueurConnecte.ordre" class="row" id="zone-action">
+                <h2>A vous de jouer !</h2>
+                <button>Je passe mon tour</button>
+            </div>
         </div>
     {% endraw %}
 {% endblock %}
@@ -47,7 +51,6 @@
                                             $scope.pathImages = "{{ asset("images") }}";
                                             
                                             $scope.classeJoueur = function(ordreJoueur){
-                                                console.log("=>" + $scope.dtoPartie.partie.ordre);
                                                 if( parseInt(ordreJoueur)===parseInt($scope.dtoPartie.partie.ordre))
                                                     return "{'background-color': 'red'}";
                                                 
