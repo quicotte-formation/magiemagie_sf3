@@ -22,6 +22,29 @@ class PartieService {
      */
     private $em;
 
+    public function passerTour($joueurId){
+        
+        $this->em->beginTransaction();
+        
+        // Récupère joueur
+        $joueur = $this->em->find("AppBundle:Joueur", $joueurId);
+        
+        // Récupère 2 cartes ds la pioche
+        for($i=0;$i<2;$i++){
+            
+            $carte = self::tirerCarte();
+            $joueur->addCarte($carte);
+            $carte->setJoueur($joueur);
+            $this->em->persist($carte);
+        }
+        
+        // Passe au joueur suivant
+        $this->determinerJoueurSuivant($joueur->getPartie()->getId());
+        
+        $this->em->flush();
+        $this->em->commit();
+    }
+    
     public function determinerJoueurSuivant($partieId){
         
         $this->em->beginTransaction();
@@ -41,8 +64,8 @@ class PartieService {
                 . "ORDER BY j.ordre")->setParameter("partieId", $partieId)
                 ->getResult();
 
-        if( count($joueursActifsSuivants>0) )
-            $partie->setOrdre( $joueursActifsSuivants[0]->getOrdre() + 1 );
+        if( count($joueursActifsSuivants)>0)
+            $partie->setOrdre( $joueursActifsSuivants[0]->getOrdre() );
         else{
             
             // Récupère les joueurs actifs précédents, dans l'ordre
@@ -62,7 +85,7 @@ class PartieService {
             $partie->setOrdre( $joueursActifsPrécédents[0]->getOrdre() );
         }
         
-        $this->em->push();
+        $this->em->flush();
         $this->em->commit();
     }
     

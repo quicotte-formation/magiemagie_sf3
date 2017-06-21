@@ -8,10 +8,22 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class PartieController extends Controller
 {
     /**
+     * @Route("/ajax_passer_tour", name="ajax_passer_tour")
+     * @param \Symfony\Component\HttpFoundation\Request $req
+     */
+    public function ajaxPasserTourAction(\Symfony\Component\HttpFoundation\Request $req){
+        
+        $service = $this->get("partieService");
+        $service->passerTour( $req->getSession()->get("joueurConnecte")->getId() );
+        
+        return new \Symfony\Component\HttpFoundation\Response();
+    }
+    
+    /**
      * @Route("/ajax_etat_partie", name="ajax_etat_partie")
      * @param \Symfony\Component\HttpFoundation\Request $req
      */
-    public function ajaxEtatPartie(\Symfony\Component\HttpFoundation\Request $req){
+    public function ajaxEtatPartieAction(\Symfony\Component\HttpFoundation\Request $req){
 
         $idPartie = $req->getSession()->get("idPartieActuelle");
         $joueur = $req->getSession()->get("joueurConnecte");

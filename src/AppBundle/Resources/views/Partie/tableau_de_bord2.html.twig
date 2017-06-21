@@ -14,7 +14,6 @@
                                 <img ng-style="{{ classeJoueur(j.ordre) }}" class="img-thumbnail" src="{{ pathImages}}/sorciere{{ j.ordre}}.png"/>
                                 <p>{{ j.nom }}</p>
                                 <p>Cartes: {{ j.nbCartes}}</p>
-                                <p>MAIN</p>
                             </td>
                         </tr>
                     </table>
@@ -34,7 +33,7 @@
             </div>
             <div ng-if="dtoPartie.partie.ordre==dtoPartie.joueurConnecte.ordre" class="row" id="zone-action">
                 <h2>A vous de jouer !</h2>
-                <button>Je passe mon tour</button>
+                <button ng-click="passerTour()">Je passe mon tour</button>
             </div>
         </div>
     {% endraw %}
@@ -50,12 +49,17 @@
                                             $scope.dtoPartie = null;
                                             $scope.pathImages = "{{ asset("images") }}";
                                             
+                                            $scope.passerTour = function(){
+                                                $http({ method: "GET",
+                                                        url: "{{ path("ajax_passer_tour") }}"});
+                                            };
+                                            
                                             $scope.classeJoueur = function(ordreJoueur){
                                                 if( parseInt(ordreJoueur)===parseInt($scope.dtoPartie.partie.ordre))
                                                     return "{'background-color': 'red'}";
                                                 
                                                 return "";
-                                            }
+                                            };
                                             
                                             $interval(function () {
 
