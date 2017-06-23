@@ -11,9 +11,9 @@
                     <table class="table">
                         <tr>
                             <td style="text-align: center;" ng-repeat="j in dtoPartie.joueurs">
-                                <img ng-style="{{ classeJoueur(j.ordre) }}" class="img-thumbnail" src="{{ pathImages}}/sorciere{{ j.ordre}}.png"/>
+                                <img ng-click="ajouterCible(j)" ng-style="{{ classeJoueur(j.ordre) }}" class="img-thumbnail" src="{{ pathImages}}/sorciere{{ j.ordre}}.png"/>
                                 <p>{{ j.nom }}</p>
-                                <p>Cartes: {{ j.nbCartes}}</p>
+                                <p>Cartes: {{ j.nbCartes }}</p>
                             </td>
                         </tr>
                     </table>
@@ -25,7 +25,7 @@
                     <table class="table">
                         <tr>
                             <td style="text-align: center;" ng-repeat="carte in dtoPartie.mesCartes">
-                                <img class="img-thumbnail" src="{{ pathImages}}/{{ carte.type}}.png"/>
+                                <img ng-click="ajouterCarte(carte)" class="img-thumbnail" src="{{ pathImages}}/{{ carte.type}}.png"/>
                             </td>
                         </tr>
                     </table>
@@ -34,6 +34,8 @@
             <div ng-if="dtoPartie.partie.ordre==dtoPartie.joueurConnecte.ordre" class="row" id="zone-action">
                 <h2>A vous de jouer !</h2>
                 <button ng-click="passerTour()">Je passe mon tour</button>
+                Cibles: {{ monTour.cibles | json }}
+                Cartes: {{ monTour.cartes | json }}
             </div>
         </div>
     {% endraw %}
@@ -44,10 +46,26 @@
     <script type="text/javascript">
                                     var app = angular.module("monApp", []);
 
-                                    app.controller("monControleur", ["$scope", "$interval", "$http", function ($scope, $interval, $http) {
+                                    app.controller("monControleur", ["$scope", "$http", "$timeout", function ($scope, $http, $timeout) {
+
+                                            $scope.monTour = {
+                                                cibles: [],
+                                                cartes: []
+                                            };
 
                                             $scope.dtoPartie = null;
                                             $scope.pathImages = "{{ asset("images") }}";
+                                            
+                                            $scope.ajouterCarte = function(carte){
+                                            
+                                                console.log(carte);
+                                                $scope.monTour.cartes.push(carte);
+                                            };
+                                            
+                                            $scope.ajouterCible = function(joueurCible){
+                                                
+                                                $scope.monTour.cibles.push(joueurCible)
+                                            };
                                             
                                             $scope.passerTour = function(){
                                                 $http({ method: "GET",
@@ -61,16 +79,37 @@
                                                 return "";
                                             };
                                             
-                                            $interval(function () {
+                                            $scope.rafraichirPlateau = function(){
 
-                                                $http({
-                                                    method: "GET",
-                                                    url: "{{ path("ajax_etat_partie") }}"
-                                                }).then(function (response) {
+                                                    $http({
+                                                        method: "GET",
+                                                        url: "{{ path("ajax_etat_partie") }}"
+                                                    }).then(function (response) {
 
-                                                    $scope.dtoPartie = response.data;
-                                                });
-                                            }, 5000);
+                                                        var dto = response.data;
+                                                        
+                                                        // Si le joueur connecté vient d'avoir la main, réinitialise son action actuelle
+                                                        if( dto.joueurConnecte.ordre==dto.partie.ordre &&
+                                                            ($scope.dtoPartie==null ||
+                                                            dto.partie.ordre!=$scope.dtoPartie.partie.ordre) ){
+
+                                                            $scope.monTour.cibles = [];
+                                                            $scope.monTour.cartes = [];
+                                                        }
+
+
+                                                        $scope.dtoPartie = dto;
+                                                        
+                                                        // Lance un timer
+                                                        $timeout( $scope.rafraichirPlateau, 5000 );
+                                                    }), function(response){
+                                                            
+                                                            alert("ERREUR RESEAU");
+                                                        };
+                                            }
+                                            
+                                            $scope.rafraichirPlateau();
+                                            
                                         }]);
     </script>
 {% endblock %}
