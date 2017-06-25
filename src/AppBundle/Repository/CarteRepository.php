@@ -10,6 +10,16 @@ namespace AppBundle\Repository;
  */
 class CarteRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findByCarteIds($tabIds){
+        
+        return $this->getEntityManager()->createQuery(""
+                . "SELECT   c "
+                . "FROM     AppBundle:Carte c "
+                . "WHERE    c.id IN (:ids)")
+                ->setParameter("ids", $tabIds)
+                ->getResult();
+    }
+    
     /**
      * Renvoie un tableau comprenant (id, type) des cartes du
      * joueur dont tu passes l'id en paramètre.

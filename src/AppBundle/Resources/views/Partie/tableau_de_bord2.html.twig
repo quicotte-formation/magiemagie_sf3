@@ -10,10 +10,11 @@
                     <h2>Les joueurs</h2>
                     <table class="table">
                         <tr>
-                            <td style="text-align: center;" ng-repeat="j in dtoPartie.joueurs">
+                            <td ng-repeat="j in dtoPartie.joueurs" style="text-align: center;">
                                 <img ng-click="ajouterCible(j)" ng-style="{{ classeJoueur(j.ordre) }}" class="img-thumbnail" src="{{ pathImages}}/sorciere{{ j.ordre}}.png"/>
                                 <p>{{ j.nom }}</p>
                                 <p>Cartes: {{ j.nbCartes }}</p>
+                                <p ng-if="dtoPartie.partie.ordre==j.ordre" class="glyphicon glyphicon-arrow-up fleche-joueur-actif"/>
                             </td>
                         </tr>
                     </table>
@@ -33,9 +34,11 @@
             </div>
             <div ng-if="dtoPartie.partie.ordre==dtoPartie.joueurConnecte.ordre" class="row" id="zone-action">
                 <h2>A vous de jouer !</h2>
+                <img ng-repeat="carte in monTour.cartes" class="img-thumbnail carte-selectionnee" src="{{ pathImages }}/{{ carte.type }}.png" />
+                <img ng-repeat="joueur in monTour.cibles" class="img-thumbnail  carte-selectionnee" src="{{ pathImages }}/sorciere{{ joueur.ordre }}.png"/>
+                <button ng-click="lancerSort()">Abracadabra !</button>
+                <button ng-click="annuler();">Annuler</button>
                 <button ng-click="passerTour()">Je passe mon tour</button>
-                Cibles: {{ monTour.cibles | json }}
-                Cartes: {{ monTour.cartes | json }}
             </div>
         </div>
     {% endraw %}
@@ -50,21 +53,48 @@
 
                                             $scope.monTour = {
                                                 cibles: [],
-                                                cartes: []
+                                                cartes: [],
+                                                cibleIds: [],
+                                                carteIds: []
                                             };
-
                                             $scope.dtoPartie = null;
                                             $scope.pathImages = "{{ asset("images") }}";
                                             
+                                            $scope.lancerSort = function(){
+                                                
+                                                var params = {
+                                                        cibleIdsJSON: angular.toJson($scope.monTour.cibleIds),
+                                                        carteIdsJSON: angular.toJson($scope.monTour.carteIds) };
+                                                
+                                                console.log( params );
+                                                
+                                                $http.get( "{{ path("ajax_lancer_sort") }}",
+                                                            {params: params} ).then(
+                                                        function ok(res){
+                                                            console.log("OK");
+                                                        },
+                                                        function ko(res){
+                                                            console.log("KO");
+                                                        });
+                                            };
+                                            
+                                            $scope.annuler = function(){
+                                                $scope.monTour.cibles=[];
+                                                $scope.monTour.cartes=[];
+                                                $scope.monTour.carteIds=[];
+                                                $scope.monTour.cibleIds=[];
+                                            };
+                                            
                                             $scope.ajouterCarte = function(carte){
                                             
-                                                console.log(carte);
                                                 $scope.monTour.cartes.push(carte);
+                                                $scope.monTour.carteIds.push(carte.id);
                                             };
                                             
                                             $scope.ajouterCible = function(joueurCible){
                                                 
                                                 $scope.monTour.cibles.push(joueurCible)
+                                                $scope.monTour.cibleIds.push(joueurCible.id);
                                             };
                                             
                                             $scope.passerTour = function(){
@@ -73,7 +103,7 @@
                                             };
                                             
                                             $scope.classeJoueur = function(ordreJoueur){
-                                                if( parseInt(ordreJoueur)===parseInt($scope.dtoPartie.partie.ordre))
+                                                if( ordreJoueur==$scope.dtoPartie.partie.ordre)
                                                     return "{'background-color': 'red'}";
                                                 
                                                 return "";

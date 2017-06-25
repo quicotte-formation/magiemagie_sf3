@@ -8,6 +8,22 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class PartieController extends Controller
 {
     /**
+     * @Route("/ajax_lancer_sort", name="ajax_lancer_sort")
+     */
+    public function ajaxLangerSortAction(\Symfony\Component\HttpFoundation\Request $req){
+        $cibleIds = json_decode($req->get("cibleIdsJSON") );
+        $carteIds = json_decode($req->get("carteIdsJSON") );
+
+        // Récupère les types de cartes
+        $cartes = $this->getDoctrine()->getRepository("AppBundle:Carte")->findByCarteIds($carteIds);
+        
+        // Récupère les cibles
+        $joueursCibles = $this->getDoctrine()->getRepository("AppBundle:Joueur")->findByJoueurIds($cibleIds);
+        
+        return new \Symfony\Component\HttpFoundation\Response();
+    }
+    
+    /**
      * @Route("/ajax_passer_tour", name="ajax_passer_tour")
      * @param \Symfony\Component\HttpFoundation\Request $req
      */

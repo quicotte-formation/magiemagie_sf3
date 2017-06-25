@@ -10,6 +10,16 @@ namespace AppBundle\Repository;
  */
 class JoueurRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findByJoueurIds($tabIds){
+        
+        return $this->getEntityManager()->createQuery(""
+                . "SELECT   j "
+                . "FROM     AppBundle:Joueur j "
+                . "WHERE    j.id IN (:ids)")
+                ->setParameter("ids", $tabIds)
+                ->getResult();
+    }
+    
     public function findOneDataByJoueurId($joueurId){
         
         return $this->getEntityManager()->createQuery(
