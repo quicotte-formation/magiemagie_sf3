@@ -21,7 +21,62 @@ class PartieService {
      * @var \Doctrine\ORM\EntityManager 
      */
     private $em;
-
+    
+    public function lancerSort($idLanceurSort, $carteIds, $cibleIds){
+        
+        $carteRepository = $this->em->getRepository("AppBundle:Carte");
+        $joueurRepository = $this->em->getRepository("AppBundle:Joueur");
+        
+        $this->em->beginTransaction();
+        
+        // Récupère lanceur
+        $joueurLanceurSort = $this->em->find("AppBundle:Joueur", $idLanceurSort);
+        
+        // Récupère les cartes
+        $cartes = $carteRepository->findByCarteIdsAndJoueurId($carteIds, $idLanceurSort);
+        
+        // Récupère les cibles
+        $joueursCibles = $joueurRepository->findByJoueurIds($cibleIds);
+        
+        // Exception si le joueur ne possède pas ces cartes
+        if( count($cartes)!=count($carteIds) )
+            throw new \RuntimeException ("Ces cartes ne vous appartiennent pas ; (");
+        
+        // Lance le sort et exception si n'existe pas
+        if( count($cartes)==2 && count($joueursCibles==0) 
+                && $cartes[0]->getType()== Carte::TYPE_CORNE_DE_LICORNE
+                && $cartes[1]->getType()== Carte::TYPE_BAVE_DE_CRAPAUD){
+            
+            // INVISIBILITE: prend 1 carte au hasard à chaque adversaire
+            
+        } elseif( count($cartes)==2 && count($joueursCibles==1) 
+                && $cartes[0]->getType()== Carte::TYPE_CORNE_DE_LICORNE
+                && $cartes[1]->getType()== Carte::TYPE_SANG_DE_VIERGE){
+            
+            // SANG DE VIERGE: le joueur cible me donne la moitié de ses cartes
+        } elseif( count($cartes)==2 && count($joueursCibles==1) 
+                && $cartes[0]->getType()== Carte::TYPE_BAVE_DE_CRAPAUD
+                && $cartes[1]->getType()== Carte::TYPE_LAPIS_LAZULI ){
+            
+            // HYPNOSE: échange 3 cartes contre 1 adverse
+        } elseif( count($cartes)==2 && count($joueursCibles==0) 
+                && $cartes[0]->getType()== Carte::TYPE_LAPIS_LAZULI
+                && $cartes[1]->getType()== Carte::TYPE_AILES_DE_CHAUVE_SOURIS ){
+            // DIVINATION: le joueur voit toutes les cartes des autres joueurs
+        } elseif( count($cartes)==2 && count($joueursCibles==1) 
+                && $cartes[0]->getType()== Carte::TYPE_SANG_DE_VIERGE
+                && $cartes[1]->getType()== Carte::TYPE_BAVE_DE_CRAPAUD ){
+            
+            // SOMMEIL PROFOND: la cible passe 2 tours
+        } else{
+            
+            throw new \RuntimeException("Vous avez raté votre coup! Travaillez votre mémoire");
+        }
+        
+        $this->em->flush();
+        $this->em->commit();
+    }
+    
     public function passerTour($joueurId){
         
         $this->em->beginTransaction();

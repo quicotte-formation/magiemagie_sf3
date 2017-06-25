@@ -10,15 +10,13 @@ class PartieController extends Controller
     /**
      * @Route("/ajax_lancer_sort", name="ajax_lancer_sort")
      */
-    public function ajaxLangerSortAction(\Symfony\Component\HttpFoundation\Request $req){
+    public function ajaxLancerSortAction(\Symfony\Component\HttpFoundation\Request $req){
         $cibleIds = json_decode($req->get("cibleIdsJSON") );
         $carteIds = json_decode($req->get("carteIdsJSON") );
-
-        // Récupère les types de cartes
-        $cartes = $this->getDoctrine()->getRepository("AppBundle:Carte")->findByCarteIds($carteIds);
         
-        // Récupère les cibles
-        $joueursCibles = $this->getDoctrine()->getRepository("AppBundle:Joueur")->findByJoueurIds($cibleIds);
+        $this->get("partieService")->lancerSort(
+                $req->getSession()->get("joueurConnecte")->getId(),
+                $carteIds, $cibleIds);
         
         return new \Symfony\Component\HttpFoundation\Response();
     }

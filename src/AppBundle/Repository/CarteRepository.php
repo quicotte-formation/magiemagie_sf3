@@ -10,13 +10,16 @@ namespace AppBundle\Repository;
  */
 class CarteRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function findByCarteIds($tabIds){
+    public function findByCarteIdsAndJoueurId($tabIds, $joueurId){
         
         return $this->getEntityManager()->createQuery(""
                 . "SELECT   c "
                 . "FROM     AppBundle:Carte c "
-                . "WHERE    c.id IN (:ids)")
+                . "         JOIN c.joueur j "
+                . "WHERE    c.id IN (:ids) AND "
+                . "         j.id=:joueurId")
                 ->setParameter("ids", $tabIds)
+                ->setParameter("joueurId", $joueurId)
                 ->getResult();
     }
     
