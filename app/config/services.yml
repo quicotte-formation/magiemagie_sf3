@@ -31,7 +31,7 @@ services:
         
     partieService:
         class: AppBundle\Service\PartieService
-        arguments: ["@doctrine.orm.default_entity_manager"]
+        arguments: ["@doctrine.orm.default_entity_manager", "@logger"]
         public: true
 
     # add more services, or override services that need manual wiring

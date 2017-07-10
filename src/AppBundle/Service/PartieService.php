@@ -22,6 +22,32 @@ class PartieService {
      */
     private $em;
     
+    /**
+     *
+     * @var \Symfony\Bridge\Monolog\Logger
+     */
+    private $logger;
+
+    private function volerCarte($idJoueurLanceurSort, $idJoueurVictime){
+        
+        // Récupère joueur source et cible
+        $joueurLanceurSort = $this->em->getRepository("AppBundle:Joueur")->find($idJoueurLanceurSort);
+        $joueurVictime = $this->em->getRepository("AppBundle:Joueur")->find($idJoueurVictime);
+        
+        // Si le joueur victime ne possède aucune carte, on sort de la fonction
+        $nbCartesCible = count( $joueurVictime->getCartes() );
+        if( $nbCartesCible<1  )
+            return;
+        
+        // La victime possède au moins une carte
+        
+        // Vole une carte au hasard à la victime
+        $n = rand(0, $nbCartesCible-1);
+        $carte = $joueurVictime->getCartes()->get($n);
+        $joueurVictime->removeCarte($carte);
+        $carte->setJoueur($joueurLanceurSort);
+    }
+    
     public function lancerSort($idLanceurSort, $carteIds, $cibleIds){
         
         $carteRepository = $this->em->getRepository("AppBundle:Carte");
@@ -33,7 +59,12 @@ class PartieService {
         $joueurLanceurSort = $this->em->find("AppBundle:Joueur", $idLanceurSort);
         
         // Récupère les cartes
-        $cartes = $carteRepository->findByCarteIdsAndJoueurId($carteIds, $idLanceurSort);
+        $cartes = [];
+        foreach($carteIds as $carteId){
+            $carte = $carteRepository->find($carteId);
+            if( $carte->getJoueur()->getId()==$idLanceurSort )
+                $cartes[] = $carte;
+        }
         
         // Récupère les cibles
         $joueursCibles = $joueurRepository->findByJoueurIds($cibleIds);
@@ -48,6 +79,12 @@ class PartieService {
                 && $cartes[1]->getType()== Carte::TYPE_BAVE_DE_CRAPAUD){
             
             // INVISIBILITE: prend 1 carte au hasard à chaque adversaire
+            foreach ($joueurLanceurSort->getPartie()->getJoueurs() as $joueur){
+                
+                if( $joueur->getElimine()==false && $joueur->getId()!=$joueurLanceurSort->getId() ){
+                    $this->volerCarte($idLanceurSort, $joueur->getId());
+                }
+            }
             
         } elseif( count($cartes)==2 && count($joueursCibles==1) 
                 && $cartes[0]->getType()== Carte::TYPE_CORNE_DE_LICORNE
@@ -70,8 +107,19 @@ class PartieService {
             // SOMMEIL PROFOND: la cible passe 2 tours
         } else{
             
-            throw new \RuntimeException("Vous avez raté votre coup! Travaillez votre mémoire");
+            $this->logger->warn("*** " . $cartes[0]->getType() . " " . $cartes[1]->getType() );
+            throw new \RuntimeException( sprintf("Vous avez raté votre coup! Travaillez votre mémoire %s", json_encode($cartes[0]->getType() )));
         }
+        
+        // Supprime les cartes utilisées pour lancer le sort
+        foreach ($cartes as $carte){
+        
+            $joueurLanceurSort->removeCarte( $carte );
+            $carte->setJoueur( null );
+        }
+        
+        // Passe au joueur suivant
+        $this->determinerJoueurSuivant($joueurLanceurSort->getPartie()->getId());
         
         $this->em->flush();
         $this->em->commit();
@@ -205,9 +253,10 @@ class PartieService {
         $this->em->commit();
     }
 
-    public function __construct(\Doctrine\ORM\EntityManager $em) {
+    public function __construct(\Doctrine\ORM\EntityManager $em, \Symfony\Bridge\Monolog\Logger $logger) {
 
         $this->em = $em;
+        $this->logger = $logger;
     }
 
 }

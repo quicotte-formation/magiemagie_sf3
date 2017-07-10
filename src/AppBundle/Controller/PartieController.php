@@ -14,9 +14,13 @@ class PartieController extends Controller
         $cibleIds = json_decode($req->get("cibleIdsJSON") );
         $carteIds = json_decode($req->get("carteIdsJSON") );
         
-        $this->get("partieService")->lancerSort(
-                $req->getSession()->get("joueurConnecte")->getId(),
-                $carteIds, $cibleIds);
+        try{
+            $this->get("partieService")->lancerSort(
+                    $req->getSession()->get("joueurConnecte")->getId(),
+                    $carteIds, $cibleIds);
+        }catch(\RuntimeException $e){
+            return new \Symfony\Component\HttpFoundation\Response($e->getMessage(), 500);
+        }
         
         return new \Symfony\Component\HttpFoundation\Response();
     }
