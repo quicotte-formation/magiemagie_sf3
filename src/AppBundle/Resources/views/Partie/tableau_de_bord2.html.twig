@@ -3,6 +3,8 @@
 {% block title %}Partie en cours{% endblock %}
 
 {% block body %}
+    <audio id="audio_sort_ok" src="{{ asset("audios/brouet.mp3") }}">
+    </audio>
     {% raw %}
         <div class="container" ng-app="monApp" ng-controller="monControleur">
             <div class="row" id="zone-joueurs">
@@ -71,6 +73,7 @@
                                                 $http.get( "{{ path("ajax_lancer_sort") }}",
                                                             {params: params} ).then(
                                                         function ok(res){
+                                                            document.getElementById("audio_sort_ok").play();
                                                             console.log("OK");
                                                         },
                                                         function ko(res){

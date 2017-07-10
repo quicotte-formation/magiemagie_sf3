@@ -90,7 +90,20 @@ class PartieService {
                 && $cartes[0]->getType()== Carte::TYPE_CORNE_DE_LICORNE
                 && $cartes[1]->getType()== Carte::TYPE_SANG_DE_VIERGE){
             
-            // SANG DE VIERGE: le joueur cible me donne la moitié de ses cartes
+            // FILTRE D'AMOUR: le joueur cible me donne la moitié de ses cartes
+            
+            $cartesJoueurCible = $joueursCibles[0]->getCartes();
+            if( count($cartesJoueurCible)<1 ){
+                throw new \RuntimeException("Votre petite victime n'a plus aucune carte!");
+            }
+            $nbCartesAVoler = ceil( count( $cartesJoueurCible )/2 );
+            for( $i=0;$i<$nbCartesAVoler;$i++ ){
+                
+                $this->logger->warn( sprintf("*** %d %d", $idLanceurSort, $joueursCibles[0]->getId()) );
+                
+                $this->volerCarte($idLanceurSort, $joueursCibles[0]->getId());
+            }
+            
         } elseif( count($cartes)==2 && count($joueursCibles==1) 
                 && $cartes[0]->getType()== Carte::TYPE_BAVE_DE_CRAPAUD
                 && $cartes[1]->getType()== Carte::TYPE_LAPIS_LAZULI ){
